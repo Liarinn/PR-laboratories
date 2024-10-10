@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re 
 
 url = "https://999.md/ro/list/transport/cars"
 
@@ -37,12 +38,15 @@ try:
                 # Extract name
                 name = title_div.find('a', class_='js-item-ad').text.strip()
                 
+                # Remove year from name
+                name = re.sub(r',\s*\d{4}\s*an', '', name).strip()  
+        
                 # Extract price
                 price_str = price_div.find('span', class_='ads-list-photo-item-price-wrapper').text.strip()
                 
-                # Check if the price is "negociabil"
-                if "negociabil" in price_str.lower():
-                    price = None  # Set price to None for negotiable prices
+                # Check if the price is "negociabil" or "1"
+                if ("negociabil" in price_str.lower()) or price_str == '1':
+                    price = None  # Set price to None for negotiable prices and 1 eur
                 else:
                     # Convert price to float
                     price = float(price_str.replace('€', '').replace(' ', '').replace(',', '.')) 
@@ -53,6 +57,7 @@ try:
                     'link': link
             })
         for product in products:
+            price_display = product['price'] if product['price'] is not None else "Negotiable"
             print(f"Name: {product['name']}, Price: {product['price']} EUR, Link: {product['link']}")
 
     
