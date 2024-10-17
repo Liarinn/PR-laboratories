@@ -1,10 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 import re 
+import functools
+from datetime import datetime
+import pytz  # For UTC timestamp
 
 url = "https://999.md/ro/list/transport/cars"
 
-
+eur_exchange_rate = 19.34
+dolar_exchange_rate = 17.69
 
 try:
     response = requests.get(url)
@@ -17,8 +21,8 @@ try:
         products = []
 
         currency_conversion = {
-            '€': 19.34, 
-            '$': 17.69,  
+            '€': eur_exchange_rate, 
+            '$': dolar_exchange_rate,  
             'MDL': 1.0  
         }
 
@@ -49,6 +53,8 @@ try:
                     return None
 
             return price
+        
+
 
         # All products are stored in lists 'ads-list-photo-item'
         for item in soup.find_all('li', class_='ads-list-photo-item'):
@@ -98,9 +104,45 @@ try:
         for product in products:
             price_display = product['price'] if product['price'] is not None else "Negotiable"
             phones = ", ".join(product['phone_numbers']) if product['phone_numbers'] else "No phone available"
-            print(f"Name: {product['name']}, Price: {price_display} EUR, Phone(s): {phones}, Link: {product['link']}")
+            print(f"Name: {product['name']}, Price: {price_display} MDL, Phone(s): {phones}, Link: {product['link']}")
 
-    
+        # Convert prices to dollars
+        def convert_price_dolar(product):
+            if product['price'] is not None:
+                product['price_dolar'] = product['price'] / dolar_exchange_rate
+                return product
+            return None
+
+        # Convert prices and filter products
+        products_with_dolar_prices = list(filter(None, map(convert_price_dolar, products)))
+
+        # Cars for poor students
+        min_price = 0
+        max_price = 3500
+
+        # Filter products within the price range
+        products_filtered = list(filter(lambda product: product['price_dolar'] is not None and min_price <= product['price_dolar'] <= max_price, products_with_dolar_prices))
+
+        # Sum the prices of filtered products
+        total_price = functools.reduce(lambda acc, product: acc + product['price_dolar'], products_filtered, 0)
+
+        # Attach sum and products to a new data structure
+        final_data = {
+            'cheap_products': products_filtered,
+            'total_price_dolar': total_price,
+            'timestamp': datetime.now(pytz.utc).strftime('%Y-%m-%d %H:%M:%S UTC')  # Attach UTC timestamp
+        }
+
+        # Output cheap car data
+        print(f"Total price of filtered products: {final_data['total_price_dolar']} $")
+        print(f"UTC Timestamp: {final_data['timestamp']}")
+        print("Filtered Products:")
+        for product in final_data['cheap_products']:
+            print(f"Name: {product['name']}, Price: {product['price_dolar']} $, Link: {product['link']}")
+
+
+       
+            
     else:
         print(f"GET request failed with status code: {response.status_code}")
 
