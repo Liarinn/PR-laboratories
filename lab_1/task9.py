@@ -70,6 +70,9 @@ def serialize(data):
     elif isinstance(data, int):
         # Integer
         return f"I({data})"
+    elif isinstance(data, float):
+        # Float
+        return f"F({data})"
     elif isinstance(data, str):
         # String
         return f"S({data})"
@@ -87,10 +90,18 @@ test_data = {
         "age": 16,
         "email": "riri@example.com"
     },
-    "numbers": [1, 2, 3, 4],
+    "numbers": [1, 2, 3, 44],
     "description": {
         "gender": [True],
         "preferences": ["music", "reading"]
+    },
+    "constcomplexData" : {
+    "name": "1984 (Wordsworth Classics)",
+    "price": [6.46, 7.56],
+    "details": {
+        "currency": "USD",
+        "availability": [True]
+    }
     }
 }
 

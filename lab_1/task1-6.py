@@ -98,13 +98,14 @@ try:
                 products.append({
                     'name': name,
                     'price': price,
-                    'phone_numbers': phone_numbers,
+                    # 'phone_numbers': phone_numbers,
                     'link': link
             })
         for product in products:
             price_display = product['price'] if product['price'] is not None else "Negotiable"
-            phones = ", ".join(product['phone_numbers']) if product['phone_numbers'] else "No phone available"
-            print(f"Name: {product['name']}, Price: {price_display} MDL, Phone(s): {phones}, Link: {product['link']}")
+            # phones = ", ".join(product['phone_numbers']) if product['phone_numbers'] else "No phone available"
+            # print(f"Name: {product['name']}, Price: {price_display} MDL, Phone(s): {phones}, Link: {product['link']}")
+            print(f"Name: {product['name']}, Price: {price_display} MDL, Link: {product['link']}")
 
         # Convert prices to dollars
         def convert_price_dolar(product):
@@ -114,14 +115,14 @@ try:
             return None
 
         # Convert prices and filter products
-        products_with_dolar_prices = list(filter(None, map(convert_price_dolar, products)))
+        products_with_dolar_prices = filter(None, map(convert_price_dolar, products))
 
         # Cars for poor students
         min_price = 0
-        max_price = 3500
+        max_price = 5500
 
         # Filter products within the price range
-        products_filtered = list(filter(lambda product: product['price_dolar'] is not None and min_price <= product['price_dolar'] <= max_price, products_with_dolar_prices))
+        products_filtered = list(filter(lambda product:  min_price <= product['price_dolar'] <= max_price, products_with_dolar_prices))
 
         # Sum the prices of filtered products
         total_price = functools.reduce(lambda acc, product: acc + product['price_dolar'], products_filtered, 0)
