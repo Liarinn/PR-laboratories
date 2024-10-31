@@ -76,23 +76,23 @@ try:
                 
                 price = clean_and_convert_price(price_str)
 
-                # Request at product page to scrape phone numbers
-                product_page = requests.get(link)
-                product_soup = BeautifulSoup(product_page.text, 'html.parser')
+                # # Request at product page to scrape phone numbers
+                # product_page = requests.get(link)
+                # product_soup = BeautifulSoup(product_page.text, 'html.parser')
 
-                # Phone numbers repeat on the product page
-                phone_numbers = set()
+                # # Phone numbers repeat on the product page
+                # phone_numbers = set()
 
-                # Find all <a> elements with phone numbers in links
-                phone_elements = product_soup.select('a[href^="tel:"]')
+                # # Find all <a> elements with phone numbers in links
+                # phone_elements = product_soup.select('a[href^="tel:"]')
 
-                # Remove unecessary phone numbers
-                for phone_element in phone_elements:
-                    # Extract phone number
-                    phone_number = phone_element['href'].replace('tel:', '').strip()  
-                    # Exclude the support number "+37322888002" and add unique numbers
-                    if phone_number != '+37322888002':
-                        phone_numbers.add(phone_number)
+                # # Remove unecessary phone numbers
+                # for phone_element in phone_elements:
+                #     # Extract phone number
+                #     phone_number = phone_element['href'].replace('tel:', '').strip()  
+                #     # Exclude the support number "+37322888002" and add unique numbers
+                #     if phone_number != '+37322888002':
+                #         phone_numbers.add(phone_number)
             
 
                 products.append({
